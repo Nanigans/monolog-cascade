@@ -1,8 +1,10 @@
-Monolog Cascade [![Build Status](https://travis-ci.org/theorchard/monolog-cascade.svg?branch=master)](https://travis-ci.org/theorchard/monolog-cascade) [![Coverage Status](https://coveralls.io/repos/theorchard/monolog-cascade/badge.svg?branch=master)](https://coveralls.io/r/theorchard/monolog-cascade?branch=master)
+Monolog Cascade
 ===============
 
 What is Monolog Cascade?
 ------------------------
+
+This is Nanigans' fork of Monolog Cascade.
 
 Monolog Cascade is a [Monolog](https://github.com/Seldaek/monolog) extension that allows you to set up and configure multiple loggers and handlers from a single config file.
 
@@ -17,7 +19,7 @@ Installation
 
 Add `monolog-cascade` as a requirement in your `composer.json` file or run
 ```sh
-$ composer require theorchard/monolog-cascade
+$ composer require nanigans/monolog-cascade
 ```
 
 Note: Monolog Cascade requires PHP 5.3.9 or higher.
@@ -81,6 +83,9 @@ loggers:
     myLogger:
         handlers: [console, info_file_handler]
         processors: [web_processor]
+    myLogger.child:
+        handlers: [console]
+        inherit: true
 ```
 
 Here is a sample PHP config file:
@@ -129,14 +134,17 @@ return array(
     'loggers' => array(
         'my_logger' => array(
             'handlers' => array('console', 'info_file_handler')
-        )
+        ),
+        'my_logger.child' => array(
+            'handlers' => array('console'),
+            'inherit' => true
     )
 );
 ```
 
 More information on how the Cascade config parser loads and reads the parameters:
 
-Only the `loggers` key is required. If `formatters` and/or `handlers` are ommitted, Monolog's default will be used. `processors` is optional and if ommitted, no processors will be used. (See the "Optional Keys" section further below).
+Only the `loggers` key is required. If `formatters`, `handlers` and/or `inherit` are omitted, Monolog's default will be used. `processors` is optional and if omitted, no processors will be used. (See the "Optional Keys" section further below).
 
 Other keys are optional and would be interpreted as described below:
 
@@ -161,7 +169,7 @@ If some parameters are not present in the constructor, they will be treated as e
 - **_processors_** - the derived associative array (from the Yaml or JSON) in which each key is the processor identifier holds keys/values to configure your processors.<br />The following key is _reserved_:
     - `class` (required): classname of the processor you would like to use
 
-- **_loggers_** - the derived array (from the Yaml or JSON) in which each key is the logger identifier may contain only a `handlers` key and/or a `processors` key. You can decide what handler(s) and/or processor(s) you would like your logger to use.
+- **_loggers_** - the derived array (from the Yaml or JSON) in which each key is the logger identifier may contain only a `handlers` key  a `processors` and/or a parent key. You can decide what handler(s) and/or processor(s) you would like your logger to use.
 
 **Note**: If you would like to use objects as parameters for your handlers, you can pass a class name (using the `class` option) with the corresponding arguments just like you would configure your handler. Cascade recursively instantiates and loads those objects as it parses the config file. See [this sample config file](https://github.com/theorchard/monolog-cascade/blob/master/examples/dependency_config.yml).
 
@@ -182,10 +190,10 @@ Using a Yaml file:
 Cascade will _camelCase_ all the names of your parameters internally prior to be passed to the constructors.
 
 #### Optional keys
-`formatters`, `handlers` and `processors` keys are optional. If ommitted Cascade will default to Monolog's default formatter and handler: `Monolog\Formatter\LineFormatter` and `Monolog\Handler\StreamHandler` to `stderr`. If `processors` is ommitted, your logger(s) won't use any.
+`formatters`, `handlers`, `processors` and `inherit` keys are optional. If omitted Cascade will default to Monolog's default formatter and handler: `Monolog\Formatter\LineFormatter` and `Monolog\Handler\StreamHandler` to `stderr`. If `processors` is omitted, your logger(s) won't use any. If `inherit` is omitted, the field will default to false.
 
 #### Default parameters
-If a constructor method provides default value(s) in their declaration, Cascade will look it up and identify those parameters as optional with their default values. It can therefore be ommitted in your config file.
+If a constructor method provides default value(s) in their declaration, Cascade will look it up and identify those parameters as optional with their default values. It can therefore be omitted in your config file.
 
 #### Order of sections and params
 Order of the sections within the config file has no impact as long as they are formatted properly.
