@@ -81,6 +81,10 @@ loggers:
     myLogger:
         handlers: [console, info_file_handler]
         processors: [web_processor]
+    myLogger.mySubClass:
+        handlers: [console]
+        inherit: true
+
 ```
 
 Here is a sample PHP config file:

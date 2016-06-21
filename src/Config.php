@@ -169,9 +169,25 @@ class Config
      */
     protected function configureLoggers(array $loggers)
     {
+
+        $instantiatedLoggers = array();
+
+        if (array_key_exists('default', $loggers)) {
+            $loggerOptions = $loggers['default'];
+            $loggerLoader = new LoggerLoader('default', $loggerOptions, $this->handlers, $this->processors);
+            $instantiatedLogger = $loggerLoader->load();
+            $instantiatedLoggers['default'] = $instantiatedLogger;
+        }
+
+        // Sort so that parents always instantiate before children
+        // Willing to spend O(n log n) for sorting due to maintainability.
+        ksort($loggers);
+
         foreach ($loggers as $loggerName => $loggerOptions) {
-            $loggerLoader = new LoggerLoader($loggerName, $loggerOptions, $this->handlers, $this->processors);
-            $this->loggers[$loggerName] = $loggerLoader->load();
+            $loggerLoader = new LoggerLoader($loggerName, $loggerOptions, $this->handlers, $this->processors, $instantiatedLoggers);
+            $instantiatedLogger = $loggerLoader->load();
+            $this->loggers[$loggerName] = $instantiatedLogger;
+            $instantiatedLoggers[$loggerName] = $instantiatedLogger;
         }
     }
 }

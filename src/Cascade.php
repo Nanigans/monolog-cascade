@@ -42,20 +42,22 @@ class Cascade
      * @param Monolog\Handler\HandlerInterface[] $handlers Optional stack of handlers, the first
      * one in the array is called first, etc.
      * @param callable[] $processors Optional array of processors
-     *
+     * @param Logger $parent Optional logger parent
+     * 
      * @return Logger Newly created Logger
      */
     public static function createLogger(
         $name,
         array $handlers = array(),
-        array $processors = array()
+        array $processors = array(),
+        Logger $parent = null
     ) {
 
         if (empty($name)) {
             throw new \InvalidArgumentException('Logger name is required.');
         }
 
-        $logger = new Logger($name, $handlers, $processors);
+        $logger = new Logger($name, $handlers, $processors, $parent);
         Registry::addLogger($logger);
 
         return $logger;
