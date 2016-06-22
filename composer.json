@@ -1,24 +1,42 @@
 {
-    "name": "theorchard/monolog-cascade",
+    "name": "nanigans/monolog-cascade",
     "license": "MIT",
     "type": "library",
     "description": "Monolog extension to configure multiple loggers in the blink of an eye and access them from anywhere",
     "keywords": ["monolog", "cascade", "monolog extension", "monolog plugin", "monolog utils", "logger", "log"],
     "authors": [
         {
+            "name": "David Johnson",
+            "email": "djohnson@nanigans.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Nitesh Gupta",
+            "email": "ngupta@nanigans.com",
+            "role": "Developer"
+        },
+        {
             "name": "Raphaël Antonmattei",
             "email": "rantonmattei@theorchard.com",
-            "homepage": "https://github.com/rantonmattei"
+            "homepage": "https://github.com/rantonmattei",
+            "role": "Original Author"
         }
     ],
+    "minimum-stability": "dev",
     "homepage": "https://github.com/theorchard/monolog-cascade",
+    "repositories": [
+        {
+            "url": "https://github.com/Nanigans/monolog.git",
+            "type": "git"
+        }
+    ],
     "require": {
         "php": ">=5.3.9",
         "symfony/config": "~2.7",
         "symfony/options-resolver": "~2.7",
         "symfony/serializer": "~2.7",
         "symfony/yaml": "~2.7",
-        "monolog/monolog": "~1.13"
+        "nanigans/monolog": "1.x-dev"
     },
     "autoload": {
         "psr-4": {
