@@ -28,42 +28,49 @@ class Config
 {
     /**
      * Input from user. This is either a file path, a string or an array
+     *
      * @var string|array
      */
     protected $input = null;
 
     /**
      * Array of logger configuration options: (logger attributes, formatters, handlers, etc.)
+     *
      * @var array
      */
     protected $options = array();
 
     /**
      * Array of Formatter objects
+     *
      * @var Monolog\Formatter\FormatterInterface[]
      */
     protected $formatters = array();
 
     /**
      * Array of Handler objects
+     *
      * @var Monolog\Handler\HandlerInterface[]
      */
     protected $handlers = array();
 
     /**
      * Array of Processor objects
+     *
      * @var callable[]
      */
     protected $processors = array();
 
     /**
      * Array of logger objects
+     *
      * @var Monolog\Logger[]
      */
     protected $loggers = array();
 
     /**
      * Config loader
+     *
      * @var ConfigLoader
      */
     protected $loader = null;
@@ -71,7 +78,7 @@ class Config
     /**
      * Instantiate a Config object
      *
-     * @param string|array $input User input
+     * @param string|array $input  User input
      * @param ConfigLoader $loader Config loader object
      */
     public function __construct($input, ConfigLoader $loader)
@@ -126,7 +133,7 @@ class Config
     /**
      * Configure the formatters
      *
-     * @param  array $formatters Array of formatter options
+     * @param array $formatters Array of formatter options
      */
     protected function configureFormatters(array $formatters = array())
     {
@@ -139,7 +146,7 @@ class Config
     /**
      * Configure the handlers
      *
-     * @param  array $handlers Array of handler options
+     * @param array $handlers Array of handler options
      */
     protected function configureHandlers(array $handlers)
     {
@@ -152,7 +159,7 @@ class Config
     /**
      * Configure the processors
      *
-     * @param  array $processors Array of processor options
+     * @param array $processors Array of processor options
      */
     protected function configureProcessors(array $processors)
     {
@@ -165,7 +172,7 @@ class Config
     /**
      * Configure the loggers
      *
-     * @param  array $loggers Array of logger options
+     * @param array $loggers Array of logger options
      */
     protected function configureLoggers(array $loggers)
     {
@@ -184,7 +191,13 @@ class Config
         ksort($loggers);
 
         foreach ($loggers as $loggerName => $loggerOptions) {
-            $loggerLoader = new LoggerLoader($loggerName, $loggerOptions, $this->handlers, $this->processors, $instantiatedLoggers);
+            $loggerLoader = new LoggerLoader(
+                $loggerName,
+                $loggerOptions,
+                $this->handlers,
+                $this->processors,
+                $instantiatedLoggers
+            );
             $instantiatedLogger = $loggerLoader->load();
             $this->loggers[$loggerName] = $instantiatedLogger;
             $instantiatedLoggers[$loggerName] = $instantiatedLogger;
