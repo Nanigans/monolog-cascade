@@ -203,7 +203,7 @@ class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
         $logger = $loader->load();
 
         $this->assertTrue($logger instanceof Logger);
-        $this->assertEquals($logger->getParent(), NULL);
+        $this->assertEquals($logger->getParent(), null);
     }
 
     public function testResolveParentWithNestedParents()
@@ -250,7 +250,7 @@ class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
         $loader = new LoggerLoader('loggerA.child.grandchild', $optionsB, array(), array(), $instantiatedLoggers);
         $loggerAGrandChild = $loader->load();
 
-        $this->assertEquals($loggerAGrandChild->getParent(), NULL);
+        $this->assertEquals($loggerAGrandChild->getParent(), null);
         $this->assertEquals($loggerAChild->getParent(), $loggerA);
     }
 
@@ -277,7 +277,7 @@ class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
         $loggerAGrandChild = $loader->load();
 
         $this->assertEquals($loggerAGrandChild->getParent(), $loggerAChild);
-        $this->assertEquals($loggerAChild->getParent(), NULL);
+        $this->assertEquals($loggerAChild->getParent(), null);
     }
 
     public function testLoad()

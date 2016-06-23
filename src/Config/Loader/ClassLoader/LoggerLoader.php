@@ -177,9 +177,9 @@ class LoggerLoader
         }
     }
 
-    public function resolveParent() {
+    public function resolveParent()
+    {
         if (isset($this->loggerOptions['inherit']) && $this->loggerOptions['inherit']) {
-
             $name = $this->logger->getName();
             $loggerNames = array_keys($this->instantiatedLoggers);
 
@@ -191,6 +191,7 @@ class LoggerLoader
                 }
                 $name = $current_parent;
             }
+
             if (array_key_exists('default', $this->instantiatedLoggers)) {
                 $this->logger->setParent($this->instantiatedLoggers['default']);
                 return;

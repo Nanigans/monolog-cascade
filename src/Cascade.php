@@ -43,7 +43,7 @@ class Cascade
      * one in the array is called first, etc.
      * @param callable[] $processors Optional array of processors
      * @param Logger $parent Optional logger parent
-     * 
+     *
      * @return Logger Newly created Logger
      */
     public static function createLogger(
