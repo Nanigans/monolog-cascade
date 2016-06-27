@@ -254,7 +254,7 @@ class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($loggerAChild->getParent(), $loggerA);
     }
 
-    public function testResolveNestedParentsWithSingleGrandChildInheritance()
+    public function testResolveParentWithSingleGrandChildInheritance()
     {
         $optionsA = array(
             'inherit' => true
@@ -278,6 +278,23 @@ class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($loggerAGrandChild->getParent(), $loggerAChild);
         $this->assertEquals($loggerAChild->getParent(), null);
+    }
+
+    public function testResolveParentWithIntergenerationalInheritance()
+    {
+        $options = array(
+            'inherit' => true
+        );
+
+        $loggerA = new Logger('loggerA');
+        $instantiatedLoggers = array(
+            'loggerA' => $loggerA
+        );
+
+        $loader = new LoggerLoader('loggerA.child.grandchild', $options, array(), array(), $instantiatedLoggers);
+        $loggerAGrandChild = $loader->load();
+
+        $this->assertEquals($loggerAGrandChild->getParent(), $loggerA);
     }
 
     public function testLoad()
