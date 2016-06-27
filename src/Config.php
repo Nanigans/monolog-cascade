@@ -179,11 +179,13 @@ class Config
 
         $instantiatedLoggers = array();
 
+        // Set default logger first, so that loggers can inherit to it if no other parents are found
         if (array_key_exists('default', $loggers)) {
             $loggerOptions = $loggers['default'];
             $loggerLoader = new LoggerLoader('default', $loggerOptions, $this->handlers, $this->processors);
             $instantiatedLogger = $loggerLoader->load();
             $instantiatedLoggers['default'] = $instantiatedLogger;
+            unset($loggers['default']);
         }
 
         // Sort so that parents always instantiate before children
