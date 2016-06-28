@@ -46,22 +46,30 @@ class LoggerLoader
     protected $logger = null;
 
     /**
+     * Array of instantiated loggers
+     */
+    protected $instantiatedLoggers = array();
+
+    /**
      * Constructor
      *
      * @param string $loggerName Name of the logger
      * @param array  $loggerOptions Array of logger options
      * @param Monolog\Handler\HandlerInterface[] $handlers Array of Monolog handlers
      * @param callable[] $processors Array of processors
+     * @param Monolog\Logger array $instantiatedLoggers
      */
     public function __construct(
         $loggerName,
         array $loggerOptions = array(),
         array $handlers = array(),
-        array $processors = array()
+        array $processors = array(),
+        array $instantiatedLoggers = array()
     ) {
         $this->loggerOptions = $loggerOptions;
         $this->handlers = $handlers;
         $this->processors = $processors;
+        $this->instantiatedLoggers = $instantiatedLoggers;
 
         // This instantiates a Logger object and set it to the Registry
         $this->logger = Cascade::getLogger($loggerName);
@@ -169,6 +177,28 @@ class LoggerLoader
         }
     }
 
+    public function resolveParent()
+    {
+        if (isset($this->loggerOptions['inherit']) && $this->loggerOptions['inherit']) {
+            $name = $this->logger->getName();
+            $loggerNames = array_keys($this->instantiatedLoggers);
+
+            while (strpos($name, '.') !== false) {
+                $current_parent = preg_replace('/\.[a-z]+$/', '', $name);
+                if (in_array($current_parent, $loggerNames)) {
+                    $this->logger->setParent($this->instantiatedLoggers[$current_parent]);
+                    return;
+                }
+                $name = $current_parent;
+            }
+
+            if (array_key_exists('default', $this->instantiatedLoggers)) {
+                $this->logger->setParent($this->instantiatedLoggers['default']);
+                return;
+            }
+        }
+    }
+    
     /**
      * Return the instantiated Logger object based on its name
      *
@@ -178,6 +208,7 @@ class LoggerLoader
     {
         $this->addHandlers($this->resolveHandlers($this->loggerOptions, $this->handlers));
         $this->addProcessors($this->resolveProcessors($this->loggerOptions, $this->processors));
+        $this->resolveParent();
 
         return $this->logger;
     }

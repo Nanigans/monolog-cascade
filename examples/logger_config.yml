@@ -34,8 +34,11 @@ handlers:
         stream: ./example_error.log
 
 loggers:
+    loggerA.child:
+        handlers: [info_file_handler]
+        inherit: true
     loggerA:
-        handlers: [console, info_file_handler]
+        handlers: [console]
     loggerB:
         handlers: [console, error_file_handler]
         processors: [web_processor]

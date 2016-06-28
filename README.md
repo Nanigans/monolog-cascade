@@ -79,8 +79,12 @@ processors:
         class: Monolog\Processor\MemoryUsageProcessor
 loggers:
     myLogger:
-        handlers: [console, info_file_handler]
+        handlers: [console]
         processors: [web_processor]
+    myLogger.mySubClass:
+        handlers: [info_file_handler]
+        inherit: true
+
 ```
 
 Here is a sample PHP config file:

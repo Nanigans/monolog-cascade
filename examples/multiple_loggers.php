@@ -12,4 +12,7 @@ Cascade::fileConfig($loggerConfigFile);
 Cascade::getLogger('loggerA')->info('Well, that works!');
 Cascade::getLogger('loggerB')->error('Maybe not...');
 
+Cascade::getLogger('loggerA.child')->info('Will this propogate?');
+
+
 // This should log into 2 different log files depending on the level: 'example_info.log' and 'example_error.log'

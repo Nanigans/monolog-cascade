@@ -117,6 +117,186 @@ class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
         $loader->resolveProcessors($options, $processors);
     }
 
+    public function testResolveParent()
+    {
+        $options = array(
+            'inherit' => true
+        );
+        $loggerA = new Logger('loggerA');
+        $loggerB = new Logger('loggerB');
+        $instantiatedLoggers = array(
+            'loggerA' => $loggerA,
+            'loggerB' => $loggerB
+        );
+
+        $loader = new LoggerLoader('loggerA.child', $options, array(), array(), $instantiatedLoggers);
+        $logger = $loader->load();
+
+        $this->assertTrue($logger instanceof Logger);
+        $this->assertEquals($logger->getParent(), $loggerA);
+    }
+
+    public function testResolveParentWithDefault()
+    {
+        $options = array(
+            'inherit' => true
+        );
+        $default = new Logger('default');
+
+        $instantiatedLoggers = array(
+            'default' => $default
+        );
+
+        $loader = new LoggerLoader('childA', $options, array(), array(), $instantiatedLoggers);
+        $logger = $loader->load();
+
+        $this->assertEquals($logger->getParent(), $default);
+    }
+
+    public function testResolveParentWithDefaultAndChild()
+    {
+        $options = array(
+            'inherit' => true
+        );
+        $default = new Logger('default');
+
+        $instantiatedLoggers = array(
+            'default' => $default
+        );
+
+        $loader = new LoggerLoader('loggerA.child', $options, array(), array(), $instantiatedLoggers);
+        $loggerAChild = $loader->load();
+
+        $this->assertEquals($loggerAChild->getParent(), $default);
+    }
+
+    public function testResolveParentWithDefaultAndGrandChild()
+    {
+        $options = array(
+            'inherit' => true
+        );
+        $default = new Logger('default');
+
+        $instantiatedLoggers = array(
+            'default' => $default
+        );
+
+        $loader = new LoggerLoader('loggerA.child.grandchild', $options, array(), array(), $instantiatedLoggers);
+        $loggerAGrandChild = $loader->load();
+
+        $this->assertEquals($loggerAGrandChild->getParent(), $default);
+    }
+
+    public function testResolveParentWhenInheritIsFalse()
+    {
+        $options = array(
+            'inherit' => false
+        );
+        $loggerA = new Logger('loggerA');
+        $loggerB = new Logger('loggerB');
+        $instantiatedLoggers = array(
+            'loggerA' => $loggerA,
+            'loggerB' => $loggerB
+        );
+
+        $loader = new LoggerLoader('loggerA.child', $options, array(), array(), $instantiatedLoggers);
+        $logger = $loader->load();
+
+        $this->assertTrue($logger instanceof Logger);
+        $this->assertEquals($logger->getParent(), null);
+    }
+
+    public function testResolveParentWithNestedParents()
+    {
+        $options = array(
+            'inherit' => true
+        );
+
+        $loggerA = new Logger('loggerA');
+        $instantiatedLoggers = array(
+            'loggerA' => $loggerA
+        );
+
+        $loader = new LoggerLoader('loggerA.child', $options, array(), array(), $instantiatedLoggers);
+        $loggerAChild = $loader->load();
+        $instantiatedLoggers['loggerA.child'] = $loggerAChild;
+
+        $loader = new LoggerLoader('loggerA.child.grandchild', $options, array(), array(), $instantiatedLoggers);
+        $loggerAGrandChild = $loader->load();
+
+        $this->assertEquals($loggerAGrandChild->getParent(), $loggerAChild);
+        $this->assertEquals($loggerAChild->getParent(), $loggerA);
+    }
+
+    public function testResolveParentWithSingleChildInheritance()
+    {
+        $optionsA = array(
+            'inherit' => true
+        );
+
+        $optionsB = array(
+            'inherit' => false
+        );
+
+        $loggerA = new Logger('loggerA');
+        $instantiatedLoggers = array(
+            'loggerA' => $loggerA
+        );
+
+        $loader = new LoggerLoader('loggerA.child', $optionsA, array(), array(), $instantiatedLoggers);
+        $loggerAChild = $loader->load();
+        $instantiatedLoggers['loggerA.child'] = $loggerAChild;
+
+        $loader = new LoggerLoader('loggerA.child.grandchild', $optionsB, array(), array(), $instantiatedLoggers);
+        $loggerAGrandChild = $loader->load();
+
+        $this->assertEquals($loggerAGrandChild->getParent(), null);
+        $this->assertEquals($loggerAChild->getParent(), $loggerA);
+    }
+
+    public function testResolveParentWithSingleGrandChildInheritance()
+    {
+        $optionsA = array(
+            'inherit' => true
+        );
+
+        $optionsB = array(
+            'inherit' => false
+        );
+
+        $loggerA = new Logger('loggerA');
+        $instantiatedLoggers = array(
+            'loggerA' => $loggerA
+        );
+
+        $loader = new LoggerLoader('loggerA.child', $optionsB, array(), array(), $instantiatedLoggers);
+        $loggerAChild = $loader->load();
+        $instantiatedLoggers['loggerA.child'] = $loggerAChild;
+
+        $loader = new LoggerLoader('loggerA.child.grandchild', $optionsA, array(), array(), $instantiatedLoggers);
+        $loggerAGrandChild = $loader->load();
+
+        $this->assertEquals($loggerAGrandChild->getParent(), $loggerAChild);
+        $this->assertEquals($loggerAChild->getParent(), null);
+    }
+
+    public function testResolveParentWithIntergenerationalInheritance()
+    {
+        $options = array(
+            'inherit' => true
+        );
+
+        $loggerA = new Logger('loggerA');
+        $instantiatedLoggers = array(
+            'loggerA' => $loggerA
+        );
+
+        $loader = new LoggerLoader('loggerA.child.grandchild', $options, array(), array(), $instantiatedLoggers);
+        $loggerAGrandChild = $loader->load();
+
+        $this->assertEquals($loggerAGrandChild->getParent(), $loggerA);
+    }
+
     public function testLoad()
     {
         $options = array(
