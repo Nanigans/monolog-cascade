@@ -31,6 +31,33 @@ class Cascade
      * @var Config
      */
     protected static $config = null;
+    
+    /**
+     * Inherit on undefined logger option
+     *
+     * @var bool
+     */
+    protected static $inherit_on_undefined_logger = false;
+
+    /**
+     * Getter for option `inherit_on_undefined_logger`
+     */
+    public static function shouldInheritOnUndefined()
+    {
+        return static::$inherit_on_undefined_logger;
+    }
+
+    /**
+     * Setter for attribute `inherit_on_undefined_logger`
+     *
+     * @param bool $value
+     *
+     * @return bool
+     */
+    public static function setInheritOnUndefined($value)
+    {
+        return static::$inherit_on_undefined_logger = $value;
+    }
 
     /**
      * Create a new Logger object and push it to the registry
@@ -73,7 +100,27 @@ class Cascade
      */
     public static function getLogger($name)
     {
-        return Registry::hasLogger($name) ? Registry::getInstance($name) : self::createLogger($name);
+        if (Registry::hasLogger($name)) {
+            return Registry::getInstance($name);
+        }
+
+        if (static::shouldInheritOnUndefined()) {
+            $parent = null;
+            $current_parent = $name;
+
+            while (strpos($current_parent, '.') !== false) {
+                $current_parent = preg_replace('/\.[a-z]+$/i', '', $current_parent);
+                if (Registry::hasLogger($current_parent)) {
+                    $parent = Registry::getInstance($current_parent);
+                }
+            }
+
+            if ($parent == null && Registry::hasLogger('default')) {
+                $parent = Registry::getInstance('default');
+            }
+            return self::createLogger($name, array(), array(), $parent);
+        }
+        return self::createLogger($name);
     }
 
     /**

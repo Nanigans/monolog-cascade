@@ -109,6 +109,10 @@ class Config
             Registry::clear();
         }
 
+        if (isset($this->options['inherit_on_undefined_logger']) && $this->options['inherit_on_undefined_logger']) {
+            Cascade::setInheritOnUndefined(true);
+        }
+
         if (isset($this->options['formatters'])) {
             $this->configureFormatters($this->options['formatters']);
         }

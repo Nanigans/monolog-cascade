@@ -71,8 +71,8 @@ class LoggerLoader
         $this->processors = $processors;
         $this->instantiatedLoggers = $instantiatedLoggers;
 
-        // This instantiates a Logger object and set it to the Registry
-        $this->logger = Cascade::getLogger($loggerName);
+        // This instantiates a Logger object and sets it to the Registry
+        $this->logger = Cascade::createLogger($loggerName);
     }
 
     /**
@@ -184,7 +184,7 @@ class LoggerLoader
             $loggerNames = array_keys($this->instantiatedLoggers);
 
             while (strpos($name, '.') !== false) {
-                $current_parent = preg_replace('/\.[a-z]+$/', '', $name);
+                $current_parent = preg_replace('/\.[a-z]+$/i', '', $name);
                 if (in_array($current_parent, $loggerNames)) {
                     $this->logger->setParent($this->instantiatedLoggers[$current_parent]);
                     return;
