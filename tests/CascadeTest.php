@@ -67,6 +67,14 @@ class CascadeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($child->getParent(), $parent);
     }
 
+    public function testGetLoggerWithInheritanceAndNonAlphanumericParentNames()
+    {
+        Cascade::setInheritOnUndefined(true);
+        $parent = Cascade::getLogger('logger_A');
+        $child = Cascade::getLogger('logger_A.child_A');
+        $this->assertEquals($child->getParent(), $parent);
+    }
+
     public function testGetLoggerWithInheritanceFalse()
     {
         Cascade::setInheritOnUndefined(false);
