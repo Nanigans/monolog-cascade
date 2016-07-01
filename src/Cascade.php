@@ -37,18 +37,18 @@ class Cascade
      *
      * @var bool
      */
-    protected static $inherit_on_undefined_logger = false;
+    protected static $inheritOnUndefinedLogger = false;
 
     /**
-     * Getter for option `inherit_on_undefined_logger`
+     * Getter for run-time option `inheritOnUndefinedLogger`
      */
     public static function shouldInheritOnUndefined()
     {
-        return static::$inherit_on_undefined_logger;
+        return static::$inheritOnUndefinedLogger;
     }
 
     /**
-     * Setter for attribute `inherit_on_undefined_logger`
+     * Setter for run-time option `inheritOnUndefinedLogger`
      *
      * @param bool $value
      *
@@ -56,7 +56,7 @@ class Cascade
      */
     public static function setInheritOnUndefined($value)
     {
-        return static::$inherit_on_undefined_logger = $value;
+        return static::$inheritOnUndefinedLogger = $value;
     }
 
     /**
