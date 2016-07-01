@@ -183,13 +183,14 @@ class LoggerLoader
             $name = $this->logger->getName();
             $loggerNames = array_keys($this->instantiatedLoggers);
 
-            while (strpos($name, '.') !== false) {
-                $current_parent = preg_replace('/\.[a-z]+$/i', '', $name);
+            $last_delimit_pos = strrpos($name, '.');
+            while ($last_delimit_pos !== false) {
+                $current_parent = substr($name, 0, $last_delimit_pos);
                 if (in_array($current_parent, $loggerNames)) {
                     $this->logger->setParent($this->instantiatedLoggers[$current_parent]);
                     return;
                 }
-                $name = $current_parent;
+                $last_delimit_pos = strrpos($current_parent, '.');
             }
 
             if (array_key_exists('default', $this->instantiatedLoggers)) {

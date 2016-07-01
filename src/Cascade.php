@@ -108,11 +108,14 @@ class Cascade
             $parent = null;
             $current_parent = $name;
 
-            while (strpos($current_parent, '.') !== false) {
-                $current_parent = preg_replace('/\.[a-z]+$/i', '', $current_parent);
+            // Store the pos so we only have to search through the string once
+            $last_delimit_pos = strrpos($name, '.');
+            while ($last_delimit_pos !== false) {
+                $current_parent = substr($name, 0, $last_delimit_pos);
                 if (Registry::hasLogger($current_parent)) {
                     $parent = Registry::getInstance($current_parent);
                 }
+                $last_delimit_pos = strrpos($current_parent, '.');
             }
 
             if ($parent == null && Registry::hasLogger('default')) {
