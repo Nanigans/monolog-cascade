@@ -31,6 +31,33 @@ class Cascade
      * @var Config
      */
     protected static $config = null;
+    
+    /**
+     * Inherit on undefined logger option
+     *
+     * @var bool
+     */
+    protected static $inheritOnUndefinedLogger = false;
+
+    /**
+     * Getter for run-time option `inheritOnUndefinedLogger`
+     */
+    public static function shouldInheritOnUndefined()
+    {
+        return static::$inheritOnUndefinedLogger;
+    }
+
+    /**
+     * Setter for run-time option `inheritOnUndefinedLogger`
+     *
+     * @param bool $value
+     *
+     * @return bool
+     */
+    public static function setInheritOnUndefined($value)
+    {
+        return static::$inheritOnUndefinedLogger = $value;
+    }
 
     /**
      * Create a new Logger object and push it to the registry
@@ -73,7 +100,30 @@ class Cascade
      */
     public static function getLogger($name)
     {
-        return Registry::hasLogger($name) ? Registry::getInstance($name) : self::createLogger($name);
+        if (Registry::hasLogger($name)) {
+            return Registry::getInstance($name);
+        }
+
+        if (static::shouldInheritOnUndefined()) {
+            $parent = null;
+            $current_parent = $name;
+
+            // Store the pos so we only have to search through the string once
+            $last_delimit_pos = strrpos($name, '.');
+            while ($last_delimit_pos !== false) {
+                $current_parent = substr($name, 0, $last_delimit_pos);
+                if (Registry::hasLogger($current_parent)) {
+                    $parent = Registry::getInstance($current_parent);
+                }
+                $last_delimit_pos = strrpos($current_parent, '.');
+            }
+
+            if ($parent == null && Registry::hasLogger('default')) {
+                $parent = Registry::getInstance('default');
+            }
+            return self::createLogger($name, array(), array(), $parent);
+        }
+        return self::createLogger($name);
     }
 
     /**
