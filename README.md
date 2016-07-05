@@ -22,11 +22,11 @@ Install the latest version by adding the following to composer.json and running 
       "repositories": [
           {
               "type": "git",
-              "url": "https://github.com/nanigans/monolog"
+              "url": "https://github.com/nanigans/monolog-cascade"
           }
       ],
       "require": {
-          "nanigans/monolog": "dev-1.x"
+          "nanigans/monolog": "dev-master"
       }
   }
 ```
