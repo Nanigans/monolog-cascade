@@ -1,5 +1,7 @@
-Monolog Cascade [![Build Status](https://travis-ci.org/theorchard/monolog-cascade.svg?branch=master)](https://travis-ci.org/theorchard/monolog-cascade) [![Coverage Status](https://coveralls.io/repos/theorchard/monolog-cascade/badge.svg?branch=master)](https://coveralls.io/r/theorchard/monolog-cascade?branch=master)
+Monolog Cascade [![Build Status](https://travis-ci.org/Nanigans/monolog-cascade.svg?branch=master)](https://travis-ci.org/Nanigans/monolog-cascade) [![Coverage Status](https://coveralls.io/repos/Nanigans/monolog-cascade/badge.svg?branch=master)](https://coveralls.io/r/Nanigans/monolog-cascade?branch=master)
 ===============
+
+This is the Nanigans fork of Monolog Cascade.
 
 What is Monolog Cascade?
 ------------------------
@@ -8,18 +10,26 @@ Monolog Cascade is a [Monolog](https://github.com/Seldaek/monolog) extension tha
 
 It's been inspired by the [`logging.config`](https://docs.python.org/3.4/library/logging.config.html?highlight=fileconfig#module-logging.config) Python module.
 
-
 ------------
 
 
 Installation
 ------------
+Install the latest version by adding the following to composer.json and running `composer install`.
 
-Add `monolog-cascade` as a requirement in your `composer.json` file or run
-```sh
-$ composer require theorchard/monolog-cascade
+```json
+ {
+      "repositories": [
+          {
+              "type": "git",
+              "url": "https://github.com/nanigans/monolog"
+          }
+      ],
+      "require": {
+          "nanigans/monolog": "dev-1.x"
+      }
+  }
 ```
-
 Note: Monolog Cascade requires PHP 5.3.9 or higher.
 
 Usage
@@ -42,6 +52,7 @@ Then just use your logger as shown below
 ```php
 Cascade::getLogger('myApp')->info('Well, that works!');
 Cascade::getLogger('myApp')->error('Maybe not...');
+Casacde::getLogger('myApp.childClass')->error('This might inherit!');
 ```
 
 Configuring your loggers
@@ -254,7 +265,7 @@ Make sure your code follows the [PSR-2](https://github.com/php-fig/fig-standards
 What's next?
 ------------
  - add support for `.ini` config files
- - add support for namespaced Loggers with message propagation (through handler inheritance) so children loggers log messages using parent's handlers
+ - ~~add support for namespaced Loggers with message propagation (through handler inheritance) so children loggers log messages using parent's handlers~~
  - add more custom function handlers to cover all the possible options of the current Monolog Formatters and Handlers
  - ~~add support for Processors (DONE)~~
  - ~~add support for DB/Store and other handlers requiring injection into the constructor ([issue #30](https://github.com/theorchard/monolog-cascade/issues/30)) (DONE)~~
