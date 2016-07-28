@@ -12,6 +12,7 @@ namespace Cascade;
 
 use Monolog\Logger;
 use Monolog\Registry;
+use Monolog\Handler\NullHandler;
 
 use Cascade\Config;
 use Cascade\Config\ConfigLoader;
@@ -104,25 +105,17 @@ class Cascade
             return Registry::getInstance($name);
         }
 
-        if (static::shouldInheritOnUndefined()) {
-            $parent = null;
-            $current_parent = $name;
-
-            // Store the pos so we only have to search through the string once
-            $last_delimit_pos = strrpos($name, '.');
-            while ($last_delimit_pos !== false) {
-                $current_parent = substr($name, 0, $last_delimit_pos);
-                if (Registry::hasLogger($current_parent)) {
-                    $parent = Registry::getInstance($current_parent);
-                }
-                $last_delimit_pos = strrpos($current_parent, '.');
+        if (static::shouldInheritOnUndefined() === true) {
+            // We don't want root to inherit from root.
+            if ($name === 'root') {
+                return self::createLogger($name);
             }
 
-            if ($parent == null && Registry::hasLogger('default')) {
-                $parent = Registry::getInstance('default');
-            }
-            return self::createLogger($name, array(), array(), $parent);
+            $parent = self::getParent($name);
+            $handlers = array(new NullHandler()); // Pass the child a null handler, so we don't log to stderr twice.
+            return self::createLogger($name, $handlers, array(), $parent);
         }
+
         return self::createLogger($name);
     }
 
@@ -159,5 +152,26 @@ class Cascade
         self::$config = new Config($resource, new ConfigLoader());
         self::$config->load();
         self::$config->configure();
+    }
+
+    /**
+     * Given a name of a logger, get its parent logger. If none exists, give it the root logger.
+     *
+     * @param $name
+     * @return Logger
+     */
+    private static function getParent($name)
+    {
+        // Store the pos so we only have to search through the string once
+        $last_delimit_pos = strrpos($name, '.');
+        while ($last_delimit_pos !== false) {
+            $current_parent = substr($name, 0, $last_delimit_pos);
+            if (Registry::hasLogger($current_parent)) {
+                return Registry::getInstance($current_parent);
+            }
+            $last_delimit_pos = strrpos($current_parent, '.');
+        }
+
+        return Registry::hasLogger('root') ? Registry::getInstance('root') : self::createLogger('root');
     }
 }

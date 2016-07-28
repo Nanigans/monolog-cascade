@@ -193,8 +193,8 @@ class LoggerLoader
                 $last_delimit_pos = strrpos($current_parent, '.');
             }
 
-            if (array_key_exists('default', $this->instantiatedLoggers)) {
-                $this->logger->setParent($this->instantiatedLoggers['default']);
+            if (array_key_exists('root', $this->instantiatedLoggers)) {
+                $this->logger->setParent($this->instantiatedLoggers['root']);
                 return;
             }
         }

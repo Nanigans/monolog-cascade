@@ -12,6 +12,7 @@ namespace Cascade\Tests;
 
 use Monolog\Logger;
 use Monolog\Registry;
+use Monolog\Handler\NullHandler;
 
 use Cascade\Cascade;
 use Cascade\Tests\Fixtures;
@@ -70,8 +71,8 @@ class CascadeTest extends \PHPUnit_Framework_TestCase
     public function testGetLoggerWithInheritanceAndNonAlphanumericParentNames()
     {
         Cascade::setInheritOnUndefined(true);
-        $parent = Cascade::getLogger('logger_A');
-        $child = Cascade::getLogger('logger_A.child_A');
+        $parent = Cascade::getLogger('logger_Aé');
+        $child = Cascade::getLogger('logger_Aé.child_A');
         $this->assertEquals($child->getParent(), $parent);
     }
 
@@ -91,22 +92,48 @@ class CascadeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($grandchild->getParent(), $parent);
     }
 
-
-    public function testGetLoggerWithDefaultInheritance()
+    public function testGetLoggerWithRootInheritance()
     {
         Cascade::setInheritOnUndefined(true);
-        $default = Cascade::getLogger('default');
+        $root = Cascade::getLogger('root');
         $grandchild = Cascade::getLogger('loggerA.child.grandchild');
-        $this->assertEquals($grandchild->getParent(), $default);
+        $this->assertEquals($grandchild->getParent(), $root);
     }
 
-    public function testGetLoggerWithDefaultAndParent()
+    public function testGetLoggerWithRootInheritanceHasNullHandler()
     {
         Cascade::setInheritOnUndefined(true);
-        $default = Cascade::getLogger('default');
+        $root = Cascade::getLogger('root');
+        $grandchild = Cascade::getLogger('loggerA.child.grandchild');
+        $null_handler = new NullHandler();
+        $grandchild_handlers = $grandchild->getHandlers();
+        $this->assertEquals(count($grandchild_handlers), 1);
+        $this->assertEquals($grandchild_handlers[0], $null_handler);
+    }
+
+    public function testGetLoggerWithNoInheritanceHasNoHandler()
+    {
+        Cascade::setInheritOnUndefined(false);
+        $undefined_logger = Cascade::getLogger('SomeUndefinedLogger');
+        $handlers = $undefined_logger->getHandlers();
+        $this->assertEmpty($handlers);
+    }
+
+    public function testGetLoggerWithRootAndParent()
+    {
+        Cascade::setInheritOnUndefined(true);
+        $root = Cascade::getLogger('root');
         $parent = Cascade::getLogger('loggerA.child');
         $grandchild = Cascade::getLogger('loggerA.child.grandchild');
         $this->assertEquals($grandchild->getParent(), $parent);
+    }
+
+    public function testGetLoggerWithNoInheritanceDoesNotCreateRoot()
+    {
+        Cascade::setInheritOnUndefined(false);
+        $undefined_logger = Cascade::getLogger('ThisLoggerShouldNotInheritFromRoot');
+        $root_logger = $undefined_logger->getParent();
+        $this->assertNull($root_logger);
     }
 
     public function testRegistry()
@@ -134,6 +161,15 @@ class CascadeTest extends \PHPUnit_Framework_TestCase
         $child = Cascade::logger('loggerA.child');
         $child2 = Cascade::logger('loggerA.child');
         $this->assertSame($child, $child2);
+    }
+
+    public function testRegistryWithRootInheritance()
+    {
+        Cascade::setInheritOnUndefined(true);
+        $undefined_logger = Cascade::logger('UndefinedLogger');
+        $default_root = $undefined_logger->getParent();
+        $user_generated_root = Cascade::logger('root');
+        $this->assertSame($default_root, $user_generated_root);
     }
 
     /**
