@@ -183,14 +183,15 @@ class Config
 
         $instantiatedLoggers = array();
 
-        // Set default logger first, so that loggers can inherit to it if no other parents are found
-        if (array_key_exists('default', $loggers)) {
-            $loggerOptions = $loggers['default'];
-            $loggerLoader = new LoggerLoader('default', $loggerOptions, $this->handlers, $this->processors);
-            $instantiatedLogger = $loggerLoader->load();
-            $instantiatedLoggers['default'] = $instantiatedLogger;
-            unset($loggers['default']);
+        // Set root logger first, so that loggers can inherit to it if no other parents are found
+        if (array_key_exists('root', $loggers)) {
+            $loggerOptions = $loggers['root'];
+            unset($loggers['root']);
+        } else {
+            $loggerOptions = array(); // By Monolog's default, this will log to stderr
         }
+        $loggerLoader = new LoggerLoader('root', $loggerOptions, $this->handlers, $this->processors);
+        $instantiatedLoggers['root'] = $loggerLoader->load();
 
         // Sort so that parents always instantiate before children
         // Willing to spend O(n log n) for sorting due to maintainability.

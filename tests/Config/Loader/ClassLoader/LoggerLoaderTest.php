@@ -136,38 +136,38 @@ class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($logger->getParent(), $loggerA);
     }
 
-    public function testResolveParentWithDefault()
+    public function testResolveParentWithRoot()
     {
         $options = array(
             'inherit' => true
         );
-        $default = new Logger('default');
+        $root = new Logger('root');
 
         $instantiatedLoggers = array(
-            'default' => $default
+            'root' => $root
         );
 
         $loader = new LoggerLoader('childA', $options, array(), array(), $instantiatedLoggers);
         $logger = $loader->load();
 
-        $this->assertEquals($logger->getParent(), $default);
+        $this->assertEquals($logger->getParent(), $root);
     }
 
-    public function testResolveParentWithDefaultAndChild()
+    public function testResolveParentWithRootAndChild()
     {
         $options = array(
             'inherit' => true
         );
-        $default = new Logger('default');
+        $root = new Logger('root');
 
         $instantiatedLoggers = array(
-            'default' => $default
+            'root' => $root
         );
 
         $loader = new LoggerLoader('loggerA.child', $options, array(), array(), $instantiatedLoggers);
         $loggerAChild = $loader->load();
 
-        $this->assertEquals($loggerAChild->getParent(), $default);
+        $this->assertEquals($loggerAChild->getParent(), $root);
     }
 
     public function testResolveParentWithDefaultAndGrandChild()
@@ -175,16 +175,16 @@ class LoggerLoaderTest extends \PHPUnit_Framework_TestCase
         $options = array(
             'inherit' => true
         );
-        $default = new Logger('default');
+        $root = new Logger('root');
 
         $instantiatedLoggers = array(
-            'default' => $default
+            'root' => $root
         );
 
         $loader = new LoggerLoader('loggerA.child.grandchild', $options, array(), array(), $instantiatedLoggers);
         $loggerAGrandChild = $loader->load();
 
-        $this->assertEquals($loggerAGrandChild->getParent(), $default);
+        $this->assertEquals($loggerAGrandChild->getParent(), $root);
     }
 
     public function testResolveParentWhenInheritIsFalse()
