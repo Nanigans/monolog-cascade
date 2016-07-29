@@ -205,7 +205,8 @@ class CascadeTest extends \PHPUnit_Framework_TestCase
 
     public function testResetConfigurationWithConfigFile()
     {
-        Cascade::fileConfig('./Fixtures/fixture_config.yml');
+        $config_file = Fixtures::getYamlConfigFile();
+        Cascade::fileConfig($config_file);
         $this->assertNotNull(Cascade::getConfig());
 
         Cascade::resetConfiguration();
