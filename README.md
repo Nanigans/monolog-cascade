@@ -4,12 +4,13 @@ Monolog Cascade
 What is Monolog Cascade?
 ------------------------
 
-This is Nanigans' fork of Monolog Cascade.
+This is a Nanigans' fork of Monolog Cascade, a [Monolog](https://github.com/Seldaek/monolog) extension. It is based on [Nangians' fork of Monolog](Nanigans/Monolog).
 
-Monolog Cascade is a [Monolog](https://github.com/Seldaek/monolog) extension that allows you to set up and configure multiple loggers and handlers from a single config file.
+Monolog Cascade allows you to set up and configure multiple loggers and handlers from a single config file.
 
 It's been inspired by the [`logging.config`](https://docs.python.org/3.4/library/logging.config.html?highlight=fileconfig#module-logging.config) Python module.
 
+This fork adds support for parent-child inheritance.
 
 ------------
 
