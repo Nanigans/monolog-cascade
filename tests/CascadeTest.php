@@ -172,6 +172,30 @@ class CascadeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($default_root, $user_generated_root);
     }
 
+    public function testResetConfiguration()
+    {
+        Cascade::logger('root');
+        Cascade::logger('LoggerA');
+        Cascade::logger('LoggerA.Child');
+        $this->assertTrue(Registry::hasLogger('root'));
+        $this->assertTrue(Registry::hasLogger('LoggerA'));
+        $this->assertTrue(Registry::hasLogger('LoggerA.Child'));
+
+        Cascade::resetConfiguration();
+        $this->assertFalse(Registry::hasLogger('root'));
+        $this->assertFalse(Registry::hasLogger('LoggerA'));
+        $this->assertFalse(Registry::hasLogger('LoggerA.Child'));
+    }
+
+    public function testResetConfigurationWithConfigFile()
+    {
+        Cascade::fileConfig('./Fixtures/fixture_config.yml');
+        $this->assertNotNull(Cascade::getConfig());
+
+        Cascade::resetConfiguration();
+        $this->assertNull(Cascade::getConfig());
+    }
+
     /**
      * @expectedException InvalidArgumentException
      */
