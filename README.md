@@ -1,35 +1,28 @@
-Monolog Cascade [![Build Status](https://travis-ci.org/Nanigans/monolog-cascade.svg?branch=master)](https://travis-ci.org/Nanigans/monolog-cascade) [![Coverage Status](https://coveralls.io/repos/Nanigans/monolog-cascade/badge.svg?branch=master)](https://coveralls.io/r/Nanigans/monolog-cascade?branch=master)
+Monolog Cascade
 ===============
-
-This is the Nanigans fork of Monolog Cascade.
 
 What is Monolog Cascade?
 ------------------------
 
-Monolog Cascade is a [Monolog](https://github.com/Seldaek/monolog) extension that allows you to set up and configure multiple loggers and handlers from a single config file.
+This is a Nanigans' fork of Monolog Cascade, a [Monolog](https://github.com/Seldaek/monolog) extension. It is based on [Nangians' fork of Monolog](Nanigans/Monolog).
+
+Monolog Cascade allows you to set up and configure multiple loggers and handlers from a single config file.
 
 It's been inspired by the [`logging.config`](https://docs.python.org/3.4/library/logging.config.html?highlight=fileconfig#module-logging.config) Python module.
+
+This fork adds support for parent-child inheritance.
 
 ------------
 
 
 Installation
 ------------
-Install the latest version by adding the following to composer.json and running `composer install`.
 
-```json
- {
-      "repositories": [
-          {
-              "type": "git",
-              "url": "https://github.com/nanigans/monolog-cascade"
-          }
-      ],
-      "require": {
-          "nanigans/monolog": "dev-master"
-      }
-  }
+Add `monolog-cascade` as a requirement in your `composer.json` file or run
+```sh
+$ composer require nanigans/monolog-cascade
 ```
+
 Note: Monolog Cascade requires PHP 5.3.9 or higher.
 
 Usage
@@ -52,7 +45,6 @@ Then just use your logger as shown below
 ```php
 Cascade::getLogger('myApp')->info('Well, that works!');
 Cascade::getLogger('myApp')->error('Maybe not...');
-Casacde::getLogger('myApp.childClass')->error('This might inherit!');
 ```
 
 Configuring your loggers
@@ -90,12 +82,11 @@ processors:
         class: Monolog\Processor\MemoryUsageProcessor
 loggers:
     myLogger:
-        handlers: [console]
+        handlers: [console, info_file_handler]
         processors: [web_processor]
-    myLogger.mySubClass:
-        handlers: [info_file_handler]
+    myLogger.child:
+        handlers: [console]
         inherit: true
-
 ```
 
 Here is a sample PHP config file:
@@ -144,14 +135,17 @@ return array(
     'loggers' => array(
         'my_logger' => array(
             'handlers' => array('console', 'info_file_handler')
-        )
+        ),
+        'my_logger.child' => array(
+            'handlers' => array('console'),
+            'inherit' => true
     )
 );
 ```
 
 More information on how the Cascade config parser loads and reads the parameters:
 
-Only the `loggers` key is required. If `formatters` and/or `handlers` are ommitted, Monolog's default will be used. `processors` is optional and if ommitted, no processors will be used. (See the "Optional Keys" section further below).
+Only the `loggers` key is required. If `formatters`, `handlers` and/or `inherit` are omitted, Monolog's default will be used. `processors` is optional and if omitted, no processors will be used. (See the "Optional Keys" section further below).
 
 Other keys are optional and would be interpreted as described below:
 
@@ -176,7 +170,7 @@ If some parameters are not present in the constructor, they will be treated as e
 - **_processors_** - the derived associative array (from the Yaml or JSON) in which each key is the processor identifier holds keys/values to configure your processors.<br />The following key is _reserved_:
     - `class` (required): classname of the processor you would like to use
 
-- **_loggers_** - the derived array (from the Yaml or JSON) in which each key is the logger identifier may contain only a `handlers` key and/or a `processors` key. You can decide what handler(s) and/or processor(s) you would like your logger to use.
+- **_loggers_** - the derived array (from the Yaml or JSON) in which each key is the logger identifier may contain only a `handlers` key  a `processors` and/or a parent key. You can decide what handler(s) and/or processor(s) you would like your logger to use.
 
 **Note**: If you would like to use objects as parameters for your handlers, you can pass a class name (using the `class` option) with the corresponding arguments just like you would configure your handler. Cascade recursively instantiates and loads those objects as it parses the config file. See [this sample config file](https://github.com/theorchard/monolog-cascade/blob/master/examples/dependency_config.yml).
 
@@ -197,10 +191,10 @@ Using a Yaml file:
 Cascade will _camelCase_ all the names of your parameters internally prior to be passed to the constructors.
 
 #### Optional keys
-`formatters`, `handlers` and `processors` keys are optional. If ommitted Cascade will default to Monolog's default formatter and handler: `Monolog\Formatter\LineFormatter` and `Monolog\Handler\StreamHandler` to `stderr`. If `processors` is ommitted, your logger(s) won't use any.
+`formatters`, `handlers`, `processors` and `inherit` keys are optional. If omitted Cascade will default to Monolog's default formatter and handler: `Monolog\Formatter\LineFormatter` and `Monolog\Handler\StreamHandler` to `stderr`. If `processors` is omitted, your logger(s) won't use any. If `inherit` is omitted, the field will default to false.
 
 #### Default parameters
-If a constructor method provides default value(s) in their declaration, Cascade will look it up and identify those parameters as optional with their default values. It can therefore be ommitted in your config file.
+If a constructor method provides default value(s) in their declaration, Cascade will look it up and identify those parameters as optional with their default values. It can therefore be omitted in your config file.
 
 #### Order of sections and params
 Order of the sections within the config file has no impact as long as they are formatted properly.
@@ -265,7 +259,7 @@ Make sure your code follows the [PSR-2](https://github.com/php-fig/fig-standards
 What's next?
 ------------
  - add support for `.ini` config files
- - ~~add support for namespaced Loggers with message propagation (through handler inheritance) so children loggers log messages using parent's handlers~~
+ - add support for namespaced Loggers with message propagation (through handler inheritance) so children loggers log messages using parent's handlers
  - add more custom function handlers to cover all the possible options of the current Monolog Formatters and Handlers
  - ~~add support for Processors (DONE)~~
  - ~~add support for DB/Store and other handlers requiring injection into the constructor ([issue #30](https://github.com/theorchard/monolog-cascade/issues/30)) (DONE)~~
