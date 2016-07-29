@@ -122,4 +122,25 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue(Registry::hasLogger('my_logger'));
     }
+
+    public function testLoggersConfiguredWithRootOverride()
+    {
+        $options = Fixtures::getPhpArrayConfigWithRoot();
+
+        // Mocking the ConfigLoader with the load method
+        $configLoader = $this->getMockBuilder('Cascade\Config\ConfigLoader')
+          ->disableOriginalConstructor()
+          ->setMethods(array('load'))
+          ->getMock();
+
+        $configLoader->method('load')->willReturn($options);
+
+        $config = new Config($options, $configLoader);
+
+        $config->load();
+        $config->configure();
+
+        $this->assertTrue(Registry::hasLogger('my_logger'));
+        $this->assertTrue(Registry::hasLogger('root'));
+    }
 }

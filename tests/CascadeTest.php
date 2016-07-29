@@ -186,4 +186,11 @@ class CascadeTest extends \PHPUnit_Framework_TestCase
         Cascade::fileConfig($options);
         $this->assertInstanceOf('Cascade\Config', Cascade::getConfig());
     }
+
+    public function testFileConfigWithRootOverride()
+    {
+        $options = Fixtures::getPhpArrayConfigWithRoot();
+        Cascade::fileConfig($options);
+        $this->assertInstanceOf('Cascade\Config', Cascade::getConfig());
+    }
 }
