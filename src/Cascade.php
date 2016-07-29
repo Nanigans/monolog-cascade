@@ -155,6 +155,16 @@ class Cascade
     }
 
     /**
+     * Reset configuration by clearing all options and loggers from Registry
+     *
+     */
+    public static function resetConfiguration()
+    {
+        static::$config = null;
+        Registry::clear();
+    }
+
+    /**
      * Given a name of a logger, get its parent logger. If none exists, give it the root logger.
      *
      * @param $name

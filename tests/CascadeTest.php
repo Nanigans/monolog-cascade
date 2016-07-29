@@ -13,6 +13,7 @@ namespace Cascade\Tests;
 use Monolog\Logger;
 use Monolog\Registry;
 use Monolog\Handler\NullHandler;
+use Monolog\Handler\SyslogHandler;
 
 use Cascade\Cascade;
 use Cascade\Tests\Fixtures;
@@ -170,6 +171,46 @@ class CascadeTest extends \PHPUnit_Framework_TestCase
         $default_root = $undefined_logger->getParent();
         $user_generated_root = Cascade::logger('root');
         $this->assertSame($default_root, $user_generated_root);
+    }
+
+    public function testResetConfiguration()
+    {
+        Cascade::logger('root');
+        Cascade::logger('LoggerA');
+        Cascade::logger('LoggerA.Child');
+        $this->assertTrue(Registry::hasLogger('root'));
+        $this->assertTrue(Registry::hasLogger('LoggerA'));
+        $this->assertTrue(Registry::hasLogger('LoggerA.Child'));
+
+        Cascade::resetConfiguration();
+        $this->assertFalse(Registry::hasLogger('root'));
+        $this->assertFalse(Registry::hasLogger('LoggerA'));
+        $this->assertFalse(Registry::hasLogger('LoggerA.Child'));
+    }
+
+    public function testResetConfigurationDoesNotDestroyLogger()
+    {
+        $sys_handler = new SyslogHandler('myfacility', 'local6');
+        $handlers = array($sys_handler);
+        $loggerA = Cascade::createLogger('LoggerA', $handlers);
+        $expected_handlers = $loggerA->getHandlers();
+        $this->assertNotEmpty($expected_handlers);
+        $this->assertEquals($expected_handlers[0], $sys_handler);
+
+        Cascade::resetConfiguration();
+        $loggerA_new = Cascade::getLogger('LoggerA');
+        $this->assertNotSame($loggerA, $loggerA_new);
+        $this->assertEquals($expected_handlers[0], $sys_handler);
+    }
+
+    public function testResetConfigurationWithConfigFile()
+    {
+        $config_file = Fixtures::getYamlConfigFile();
+        Cascade::fileConfig($config_file);
+        $this->assertNotNull(Cascade::getConfig());
+
+        Cascade::resetConfiguration();
+        $this->assertNull(Cascade::getConfig());
     }
 
     /**
