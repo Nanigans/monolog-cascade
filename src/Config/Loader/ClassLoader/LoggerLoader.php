@@ -198,6 +198,7 @@ class LoggerLoader
                 return;
             }
         }
+        return;
     }
     
     /**

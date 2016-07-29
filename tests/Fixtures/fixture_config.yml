@@ -33,6 +33,13 @@ handlers:
         stream: ./demo_error.log
         formatter: spaced
 
+    root_file_handler:
+        class: Monolog\Handler\StreamHandler
+        level: FATAL
+        stream: ./demo_fatal.log
+
 loggers:
+    root:
+        handlers: [console]
     my_logger:
         handlers: [console, info_file_handler]

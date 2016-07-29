@@ -122,6 +122,16 @@ class Fixtures
     }
 
     /**
+     * Return a config array with root override
+     *
+     * @return array Config array
+     */
+    public static function getPhpArrayConfigWithRoot()
+    {
+        return require self::fixtureDir().'/fixture_config_with_root.php';
+    }
+
+  /**
      * Return a sample array
      *
      * @return array Sample array
