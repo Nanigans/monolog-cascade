@@ -125,7 +125,6 @@ class ClassLoader
         $optionsByName = array();
 
         if (count($options)) {
-
             foreach ($options as $name => $value) {
                 $optionsByName[static::camelize($name)] = $value;
             }
@@ -142,9 +141,10 @@ class ClassLoader
      *
      * Borrowed from the `denormalize` method of Symfony's CamelCaseToSnakeCaseNameConverter
      */
-    protected static function camelize($propertyName) {
+    protected static function camelize($propertyName)
+    {
         $camelCasedName = preg_replace_callback('/(^|_|\.)+(.)/', function ($match) {
-          return ('.' === $match[1] ? '_' : '').strtoupper($match[2]);
+            return ('.' === $match[1] ? '_' : '').strtoupper($match[2]);
         }, $propertyName);
         return lcfirst($camelCasedName);
     }
