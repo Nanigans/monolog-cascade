@@ -31,11 +31,16 @@
         }
     ],
     "require": {
-        "php": ">=5.3.9",
-        "symfony/config": "~2.7",
-        "symfony/options-resolver": "~2.7",
-        "symfony/serializer": "~2.7",
-        "symfony/yaml": "~2.7",
+        "php": ">=5.3.3",
+        "symfony/config": "2.6.13",
+        "symfony/console": "2.6.13",
+        "symfony/event-dispatcher": "2.6.13",
+        "symfony/finder": "2.6.13",
+        "symfony/filesystem": "2.6.13",
+        "symfony/options-resolver": "2.6.13",
+        "symfony/serializer": "2.6.13",
+        "symfony/stopwatch": "2.6.13",
+        "symfony/yaml": "2.6.13",
         "nanigans/monolog": "1.x-dev"
     },
     "autoload": {
