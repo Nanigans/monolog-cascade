@@ -38,7 +38,6 @@
         "symfony/finder": "2.6.13",
         "symfony/filesystem": "2.6.13",
         "symfony/options-resolver": "2.6.13",
-        "symfony/serializer": "2.6.13",
         "symfony/stopwatch": "2.6.13",
         "symfony/yaml": "2.6.13",
         "nanigans/monolog": "1.x-dev"

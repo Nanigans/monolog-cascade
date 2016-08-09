@@ -10,8 +10,6 @@
  */
 namespace Cascade\Config\Loader;
 
-use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
-
 use Cascade\Config\Loader\ClassLoader\Resolver\ConstructorResolver;
 use Cascade\Config\Loader\ClassLoader\Resolver\ExtraOptionsResolver;
 
@@ -127,14 +125,28 @@ class ClassLoader
         $optionsByName = array();
 
         if (count($options)) {
-            $nameConverter = new CamelCaseToSnakeCaseNameConverter();
 
             foreach ($options as $name => $value) {
-                $optionsByName[$nameConverter->denormalize($name)] = $value;
+                $optionsByName[static::camelize($name)] = $value;
             }
         }
 
         return $optionsByName;
+    }
+
+    /**
+     * Convert to lowerCamelCase
+     *
+     * @param string $propertyName
+     * @return string $camelCasedName
+     *
+     * Borrowed from the `denormalize` method of Symfony's CamelCaseToSnakeCaseNameConverter
+     */
+    protected static function camelize($propertyName) {
+        $camelCasedName = preg_replace_callback('/(^|_|\.)+(.)/', function ($match) {
+          return ('.' === $match[1] ? '_' : '').strtoupper($match[2]);
+        }, $propertyName);
+        return lcfirst($camelCasedName);
     }
 
     /**
