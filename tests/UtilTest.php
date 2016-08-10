@@ -18,10 +18,10 @@ class UtilTest extends \PHPUnit_Framework_TestCase
     public function camelizeProvider()
     {
         return array(
-        array('some_thing', 'someThing'),
-        array('Some_Thing', 'someThing'),
-        array('with_three_words', 'withThreeWords'),
-        array('Upper_lower', 'upperLower'),
+            array('some_thing', 'someThing'),
+            array('Some_Thing', 'someThing'),
+            array('with_three_words', 'withThreeWords'),
+            array('Upper_lower', 'upperLower'),
         );
     }
 }
