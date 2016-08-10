@@ -11,6 +11,7 @@
 namespace Cascade\Tests\Config\Loader\ClassLoader\Resolver;
 
 use Cascade\Config\Loader\ClassLoader\Resolver\ConstructorResolver;
+use Cascade\Util;
 
 /**
  * Class ConstructorResolverTest
@@ -80,25 +81,9 @@ class ConstructorResolverTest extends \PHPUnit_Framework_TestCase
         $expectedConstructorArgs = array();
 
         foreach ($this->getConstructorArgs() as $param) {
-            $expectedConstructorArgs[static::camelize($param->getName())] = $param;
+            $expectedConstructorArgs[Util::camelize($param->getName())] = $param;
         }
         $this->assertEquals($expectedConstructorArgs, $this->resolver->getConstructorArgs());
-    }
-
-    /**
-     * Convert to lowerCamelCase
-     *
-     * @param string $propertyName
-     * @return string $camelCasedName
-     *
-     * Borrowed from the `denormalize` method of Symfony's CamelCaseToSnakeCaseNameConverter
-     */
-    protected static function camelize($propertyName)
-    {
-        $camelCasedName = preg_replace_callback('/(^|_|\.)+(.)/', function ($match) {
-            return ('.' === $match[1] ? '_' : '').strtoupper($match[2]);
-        }, $propertyName);
-        return lcfirst($camelCasedName);
     }
 
     /**
